@@ -1,0 +1,281 @@
+/* Cartolibreria Barbara · Precotto — «Piccola, ma c'è tutto.»
+   Il sito è un astuccio: in apertura è chiuso con la cerniera, scorrendo la zip si apre
+   e dentro c'è tutto, negli scomparti etichettati a mano. Palette dalla loro insegna
+   (viola con la fascia rosa dei servizi), dal verde della «Libreria» dipinta, dal giallo
+   degli evidenziatori. */
+
+/* ── reset tecnico (PLUMBING) ── */
+[hidden]{display:none !important}
+img{max-width:100%;height:auto}
+*,*::before,*::after{box-sizing:border-box}
+
+:root{
+  --viola:#5B3E96; --viola-scuro:#3E2A6B; --viola-chiaro:#EFE8FA;
+  --giallo:#F5D341; --giallo-chiaro:#FFF1B8; --verde:#3F8F4A; --verde-chiaro:#E4F1E2;
+  --rosa:#E85D8C; --rosa-chiaro:#FBE3EC; --carta:#FFF8EA; --bianco:#FFFFFF;
+  --inchiostro:#221B33; --grigio:#6D6680; --grigio-chiaro:#B7B1C6;
+  --f-tit:'Baloo 2','Trebuchet MS',sans-serif;
+  --f-txt:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mano:'Schoolbell','Comic Sans MS',cursive;
+  --lato:clamp(1.2rem,6vw,6rem);
+  --testata:66px;
+}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--testata) + 8px)}
+body{margin:0;font-family:var(--f-txt);font-size:1.08rem;line-height:1.6;color:var(--inchiostro);background:var(--carta);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block}
+a{color:inherit}
+h1,h2,h3,h4{font-family:var(--f-tit);font-weight:800;line-height:1.05;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(2rem,4.6vw,3.6rem)}
+h3{font-size:clamp(1.25rem,2vw,1.5rem);font-weight:700}
+p{margin:0 0 1em}
+b,strong{font-weight:700}
+:focus-visible{outline:3px solid var(--rosa);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* reveal: stato iniziale solo dietro .js (anti-flash) */
+.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+.js .reveal.in-view{opacity:1;transform:none}
+html:not(.js) .reveal{opacity:1;transform:none}
+
+/* ── bottoni ── */
+.bottone{display:inline-flex;align-items:center;justify-content:center;gap:.5em;padding:.85em 1.5em;font-family:var(--f-tit);font-weight:700;font-size:1.05rem;text-decoration:none;border:2.5px solid transparent;border-radius:999px;line-height:1;transition:transform .2s,background-color .2s,color .2s,border-color .2s}
+.bottone:hover{transform:translateY(-2px)}
+.bottone--giallo{background:var(--giallo);color:var(--inchiostro)}
+.bottone--giallo:hover{background:#F0C61E}
+.bottone--viola{background:var(--viola);color:#fff}
+.bottone--viola:hover{background:var(--viola-scuro)}
+.bottone--filo{border-color:var(--inchiostro);color:var(--inchiostro)}
+.bottone--filo:hover{background:var(--inchiostro);color:var(--carta)}
+.bottone--filo-chiaro{border-color:rgba(255,255,255,.8);color:#fff}
+.bottone--filo-chiaro:hover{background:#fff;color:var(--viola)}
+
+/* ── etichette scritte a mano ── */
+.etichetta{display:inline-flex;flex-direction:column;gap:.05rem;margin:0 0 1rem;padding:.45rem 1rem .5rem;background:var(--bianco);border:2px dashed var(--inchiostro);border-radius:6px;transform:rotate(-2deg);font-family:var(--f-mano);line-height:1.15;box-shadow:3px 3px 0 rgba(34,27,51,.12)}
+.etichetta__n{font-size:.85rem;color:var(--grigio)}
+.etichetta__t{font-size:1.35rem;color:var(--inchiostro)}
+.etichetta--giallo{background:var(--giallo)}
+.adesivo{position:absolute;display:inline-block;padding:.5rem .9rem;background:var(--giallo);color:var(--inchiostro);font-family:var(--f-mano);font-size:1.05rem;line-height:1.1;border-radius:999px;box-shadow:2px 3px 0 rgba(34,27,51,.18);transform:rotate(-6deg);text-align:center}
+.adesivo--rosa{background:var(--rosa);color:#fff;transform:rotate(5deg)}
+
+/* ── intro: l'etichetta che si attacca ── */
+.intro{position:fixed;inset:0;z-index:300;display:grid;place-content:center;justify-items:center;gap:1rem;background:var(--viola);color:var(--inchiostro);transition:opacity .6s,visibility .6s}
+.intro.hide{opacity:0;visibility:hidden}
+.intro__etichetta{padding:.9rem 1.6rem 1rem;background:var(--giallo);border:3px dashed var(--inchiostro);border-radius:8px;font-family:var(--f-mano);font-size:clamp(1.6rem,6vw,3.2rem);line-height:1.1;animation:attacca .6s cubic-bezier(.2,.9,.3,1.2) both;box-shadow:4px 5px 0 rgba(0,0,0,.25)}
+@keyframes attacca{from{opacity:0;transform:scale(1.25) rotate(4deg)}to{opacity:1;transform:scale(1) rotate(-3deg)}}
+.intro__skip{margin-top:.6rem;background:none;border:0;color:rgba(255,255,255,.75);font:inherit;font-family:var(--f-tit);font-weight:700;font-size:.9rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+
+/* ── testata (fondo pieno, NIENTE backdrop-filter) ── */
+.testata{position:sticky;top:0;z-index:90;display:flex;align-items:center;justify-content:space-between;gap:1rem;height:var(--testata);padding:0 clamp(1rem,4vw,3rem);background:var(--viola);color:#fff;border-bottom:3px solid var(--giallo);max-width:100%;overflow:hidden}
+.marchio{display:inline-flex;flex-direction:column;text-decoration:none;line-height:1}
+.marchio__n{font-family:var(--f-tit);font-weight:800;font-size:1.2rem;white-space:nowrap}
+.marchio__s{font-family:var(--f-mano);font-size:.8rem;color:var(--giallo);margin-top:.15rem;white-space:nowrap}
+.nav{display:flex;gap:clamp(.9rem,2vw,1.8rem)}
+.nav a{font-family:var(--f-tit);font-weight:700;font-size:.98rem;text-decoration:none;padding:.2em 0;border-bottom:3px solid transparent}
+.nav a:hover{border-bottom-color:var(--giallo)}
+.testata__coda{display:flex;align-items:center;gap:.8rem;flex:none;min-width:0}
+.lingue{display:flex;border:1.5px solid rgba(255,255,255,.5);border-radius:999px;overflow:hidden}
+.lingue button{background:none;border:0;color:#fff;font-family:var(--f-tit);font-weight:700;font-size:.8rem;letter-spacing:.06em;padding:.35em .7em;cursor:pointer;opacity:.7}
+.lingue button.is-on{background:var(--giallo);color:var(--inchiostro);opacity:1}
+.burger{display:none;position:relative;z-index:96;width:44px;height:44px;margin-right:-8px;padding:0;background:none;border:0;cursor:pointer}
+.burger span{display:block;width:26px;height:3px;margin:5px auto;background:#fff;border-radius:3px;transition:transform .25s,opacity .25s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+.drawer{position:fixed;inset:var(--testata) 0 0 0;z-index:89;display:flex;flex-direction:column;gap:.2rem;padding:2rem clamp(1.2rem,6vw,3rem);background:var(--viola-scuro);color:#fff;overflow-y:auto}
+.drawer a{font-family:var(--f-tit);font-weight:800;font-size:clamp(1.8rem,8vw,3rem);text-decoration:none;line-height:1.15;border-bottom:1px solid rgba(255,255,255,.18);padding:.25em 0}
+.drawer a.drawer__cta{margin-top:1.4rem;border:0;color:var(--giallo);font-size:clamp(1.3rem,5vw,1.8rem)}
+
+/* ── l'astuccio: la scena appiccicata e la zip ── */
+.astuccio{position:relative;height:190vh;background:var(--carta)}
+.astuccio__scena{position:sticky;top:var(--testata);height:calc(100vh - var(--testata));height:calc(100svh - var(--testata));overflow:hidden}
+.astuccio__dentro{position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(1.5rem,4vw,4rem);align-items:center;height:100%;padding:clamp(1.5rem,3vw,3rem) var(--lato)}
+.hero__kicker{display:flex;align-items:center;gap:.6rem;margin:0 0 1rem;font-family:var(--f-tit);font-weight:700;font-size:.92rem;letter-spacing:.06em;text-transform:uppercase;color:var(--viola)}
+.hero__kicker::before{content:'';width:1.6rem;height:.5rem;border-radius:999px;background:var(--giallo)}
+.hero__h{font-size:clamp(3rem,7.4vw,6.4rem);line-height:.96;margin:0 0 1.2rem}
+.hero__h .sm{color:var(--viola)}
+.hero__sub{max-width:34rem;font-size:clamp(1.05rem,1.4vw,1.25rem);margin:0 0 1.6rem}
+.hero__azioni{display:flex;flex-wrap:wrap;gap:.8rem;margin:0 0 1.2rem}
+.hero__stato{display:inline-flex;align-items:center;gap:.5rem;margin:0;font-weight:700;font-size:1rem}
+.hero__stato::before{content:'';width:11px;height:11px;border-radius:50%;background:var(--verde);box-shadow:0 0 0 4px rgba(63,143,74,.2)}
+.hero__stato.is-closed::before{background:var(--rosa);box-shadow:0 0 0 4px rgba(232,93,140,.2)}
+.hero__foto{position:relative;margin:0;border-radius:18px;overflow:visible}
+.hero__foto img{width:100%;height:auto;max-height:calc(100vh - var(--testata) - 6rem);object-fit:cover;border-radius:18px;box-shadow:0 18px 40px rgba(34,27,51,.18)}
+.hero__foto figcaption{margin-top:.6rem;font-family:var(--f-mano);font-size:.95rem;color:var(--grigio)}
+.hero__foto .adesivo--anni{top:-14px;left:-14px}
+.hero__foto .adesivo--pentel{right:-10px;bottom:36px}
+
+/* la zip: due lembi di tessuto viola, i denti gialli, il cursore. Solo con JS (senza, la pagina è aperta). */
+.zip{display:none;position:absolute;inset:0;z-index:5;overflow:hidden}
+.js .zip{display:block}
+.zip__lembo{position:absolute;inset:0;background-color:var(--viola);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.045) 0 7px,transparent 7px 14px);will-change:clip-path,transform}
+.zip__lembo::after{content:'';position:absolute;left:16px;right:16px;border:2px dashed rgba(255,255,255,.28);border-radius:16px}
+.zip__lembo--a::after{top:14px;bottom:52%}
+.zip__lembo--b::after{top:52%;bottom:14px}
+.zip__denti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.zip__denti path{fill:none;stroke:var(--giallo);stroke-width:1.9;stroke-dasharray:1 .7;stroke-linecap:butt}
+.zip__denti path.z-fondo{stroke:var(--viola-scuro);stroke-width:2.8;stroke-dasharray:none}
+.zip__cursore{position:absolute;top:50%;left:0;width:46px;height:auto;transform:translate(-50%,-32%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));will-change:left,opacity}
+.zip__hint{position:absolute;left:var(--lato);bottom:2rem;margin:0;font-family:var(--f-mano);font-size:1.15rem;color:var(--giallo);will-change:opacity}
+.zip__nome{position:absolute;left:var(--lato);top:2rem;margin:0;font-family:var(--f-mano);font-size:clamp(1.4rem,3.5vw,2.4rem);color:#fff;will-change:opacity}
+
+/* ── gli scomparti ── */
+.scomparto{padding:clamp(3.5rem,8vw,7rem) var(--lato)}
+.scomparto--carta{background:var(--carta)}
+.scomparto--giallo{background:var(--giallo-chiaro)}
+.scomparto--verde{background:var(--verde-chiaro)}
+.scomparto--rosa{background:var(--rosa-chiaro)}
+.scomparto--viola{background:var(--viola);color:#fff}
+.scomparto--viola .etichetta{background:var(--giallo)}
+.scomparto__testa{max-width:52rem;margin-bottom:clamp(1.5rem,3vw,2.5rem)}
+.scomparto__griglia{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(2rem,5vw,5rem);align-items:start}
+.scomparto__griglia--inv{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.scomparto__p{font-size:1.12rem;max-width:36rem}
+.lista{margin:1.2rem 0 0;padding:0;list-style:none;display:grid;gap:.5rem}
+.lista li{display:grid;grid-template-columns:auto 1fr;gap:.8rem;align-items:baseline;padding:.65rem .9rem;background:rgba(255,255,255,.7);border-radius:12px}
+.scomparto--viola .lista li{background:rgba(255,255,255,.12)}
+.lista b{font-family:var(--f-tit);font-weight:700;font-size:1.02rem;white-space:nowrap}
+.lista span{font-size:1rem;color:var(--grigio)}
+.scomparto--viola .lista span{color:rgba(255,255,255,.85)}
+.tessere{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:0;padding:0;list-style:none}
+.tessere--2{grid-template-columns:repeat(2,1fr)}
+.tessere li{margin:0}
+.tessere figure{margin:0}
+.shot{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;font:inherit;color:inherit;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px rgba(34,27,51,.12)}
+.shot img{width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform .5s}
+.shot--largo img{aspect-ratio:4/3}
+.shot--quadro img{aspect-ratio:1}
+.shot:hover img{transform:scale(1.03)}
+.tessere figcaption{margin-top:.45rem;font-family:var(--f-mano);font-size:.92rem;color:var(--grigio)}
+.scomparto--viola .tessere figcaption{color:rgba(255,255,255,.85)}
+.tessere .largo{grid-column:span 2}
+.tessere .tutto{grid-column:1/-1}
+
+/* ── chi c'è al banco ── */
+.banco{padding:clamp(3.5rem,8vw,7rem) var(--lato);background:var(--bianco)}
+.banco__griglia{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(2rem,5vw,5rem);align-items:start}
+.banco__p{font-size:1.12rem;max-width:36rem}
+.banco__dati{margin:1.4rem 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.banco__dati li{padding:.9rem 1rem;background:var(--viola-chiaro);border-radius:14px}
+.banco__dati b{display:block;font-family:var(--f-tit);font-weight:800;font-size:2rem;line-height:1;color:var(--viola)}
+.banco__dati span{display:block;margin-top:.25rem;font-size:.92rem;color:var(--grigio)}
+
+/* ── le voci ── */
+.voci{padding:clamp(3.5rem,8vw,7rem) var(--lato);background:var(--giallo-chiaro)}
+.voci__testa{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:1.5rem;margin-bottom:1.6rem}
+.badge{display:inline-grid;grid-template-columns:auto auto;align-items:center;gap:.15rem .9rem;padding:.8rem 1.2rem;background:var(--inchiostro);color:var(--carta);border-radius:16px}
+.badge__n{grid-row:span 2;font-family:var(--f-tit);font-weight:800;font-size:3rem;line-height:1;color:var(--giallo)}
+.badge__stelle{color:var(--giallo);letter-spacing:.1em}
+.badge__s{font-size:.85rem}
+.temi{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.7rem}
+.temi li{display:grid;grid-template-columns:4rem 1fr;gap:.8rem;align-items:center;padding:.9rem 1rem;background:var(--bianco);border-radius:14px}
+.temi b{font-family:var(--f-tit);font-weight:800;font-size:2.2rem;line-height:1;color:var(--viola)}
+.temi span{font-size:1rem}
+.voci__nota{margin:1.2rem 0 0;font-size:.95rem;color:var(--grigio);max-width:44rem}
+.voci__cit{margin:clamp(2rem,4vw,3rem) 0 0;padding:1.4rem 1.6rem;background:var(--bianco);border-radius:18px;border-left:8px solid var(--viola);display:grid;gap:.6rem}
+.voci__cit p{font-family:var(--f-tit);font-weight:700;font-size:clamp(1.3rem,2.4vw,2rem);line-height:1.2;margin:0}
+.voci__cit cite{font-style:normal;font-size:.9rem;color:var(--grigio)}
+.voci__btn{margin-top:1.2rem}
+
+/* ── dove ── */
+.dove{padding:clamp(3.5rem,8vw,7rem) var(--lato);background:var(--carta)}
+.dove__griglia{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(2rem,5vw,5rem);align-items:start}
+.dove__h{margin-bottom:1rem}
+.dove__p{font-size:1.12rem;max-width:34rem}
+.dove__ind{font-style:normal;font-size:1.12rem;line-height:1.5;margin:1.2rem 0}
+.dove__ind a{font-weight:700;text-decoration:none;border-bottom:3px solid var(--giallo)}
+.dove__no{margin:0 0 1.2rem;padding:0;list-style:none;display:grid;gap:.45rem;font-size:1rem}
+.dove__no li{padding-left:1.4rem;position:relative}
+.dove__no li::before{content:'';position:absolute;left:0;top:.5em;width:.7rem;height:.7rem;border-radius:50%;background:var(--viola)}
+.orari{width:100%;border-collapse:separate;border-spacing:0;margin:1.2rem 0 1.6rem;font-size:1rem;background:var(--bianco);border-radius:14px;overflow:hidden}
+.orari caption{text-align:left;font-family:var(--f-mano);font-size:1.05rem;color:var(--grigio);padding:0 0 .5rem}
+.orari th,.orari td{text-align:left;padding:.55rem .9rem;border-top:1px solid var(--viola-chiaro);font-weight:400}
+.orari tr:first-child th,.orari tr:first-child td{border-top:0}
+.orari th{font-weight:700;width:40%}
+.orari tr.is-today th,.orari tr.is-today td{background:var(--giallo-chiaro);color:var(--viola-scuro);font-weight:700}
+.orari td.chiuso{color:var(--grigio)}
+.dove__foto{margin:0 0 1rem}
+.dove__foto img{width:100%;height:auto;border-radius:16px}
+.dove__foto figcaption{margin-top:.5rem;font-family:var(--f-mano);font-size:.95rem;color:var(--grigio)}
+.dove__mappa{border-radius:16px;overflow:hidden;border:3px solid var(--bianco);box-shadow:0 6px 18px rgba(34,27,51,.12)}
+.dove__mappa iframe{display:block;width:100%;height:400px;min-height:340px;border:0}
+
+/* ── domande ── */
+.domande{padding:clamp(3.5rem,8vw,7rem) var(--lato);background:var(--viola-chiaro)}
+.domande h2{margin-bottom:1.4rem}
+.domande__lista{max-width:52rem;display:grid;gap:.6rem}
+.domande details{background:var(--bianco);border-radius:14px;padding:0 1.2rem}
+.domande summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0;font-family:var(--f-tit);font-weight:700;font-size:1.15rem}
+.domande summary::-webkit-details-marker{display:none}
+.domande summary::after{content:'+';flex:none;font-family:var(--f-tit);font-weight:800;font-size:1.5rem;color:var(--viola);transition:transform .25s}
+.domande details[open] summary::after{transform:rotate(45deg)}
+.domande details p{margin:0 0 1.1rem;max-width:44rem}
+
+/* ── piede ── */
+.piede{padding:clamp(2.5rem,5vw,4rem) var(--lato);background:var(--inchiostro);color:var(--carta);display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:end}
+.piede__m{font-family:var(--f-tit);font-weight:800;font-size:1.4rem;margin:0}
+.piede__s{font-family:var(--f-mano);font-size:1rem;color:var(--giallo);margin:.2rem 0 1rem}
+.piede__d{margin:0;font-size:.95rem;color:var(--grigio-chiaro);max-width:46rem}
+.piede__d a{color:var(--carta);text-decoration:none;border-bottom:2px solid var(--giallo);white-space:nowrap}
+.piede__soc{display:flex;flex-wrap:wrap;gap:1rem;font-family:var(--f-tit);font-weight:700;font-size:.95rem}
+.piede__soc a{text-decoration:none;border-bottom:2px solid var(--giallo)}
+.piede__b{grid-column:1/-1;margin:0;font-size:.8rem;color:var(--grigio-chiaro);border-top:1px solid rgba(255,248,234,.15);padding-top:1rem}
+.piede__b a{color:var(--carta);text-decoration:none;border-bottom:2px solid var(--giallo)}
+
+/* ── barra mobile ── */
+.barra{display:none}
+
+/* ── lightbox ── */
+.lightbox{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:2rem;background:rgba(34,27,51,.94)}
+.lightbox img{max-width:100%;max-height:90vh;width:auto;height:auto;border-radius:8px}
+.lightbox__chiudi{position:absolute;top:1rem;right:1rem;width:48px;height:48px;border:0;border-radius:50%;background:var(--giallo);color:var(--inchiostro);font-size:1.6rem;cursor:pointer}
+
+/* ── responsive ── */
+@media (max-width:960px){
+  .nav{display:none}
+  .burger{display:block}
+  .testata .bottone{display:none}
+  .astuccio{height:175vh}
+  .astuccio__dentro{grid-template-columns:1fr;align-content:center;gap:1.2rem;padding:1.4rem var(--lato)}
+  .hero__h{font-size:clamp(2.6rem,10vw,4.4rem)}
+  .hero__foto img{max-height:32vh}
+  .hero__foto .adesivo--anni{top:-10px;left:-6px}
+  .hero__foto .adesivo--pentel{right:-4px;bottom:24px}
+  .scomparto__griglia,.scomparto__griglia--inv,.banco__griglia,.dove__griglia{grid-template-columns:1fr}
+  .banco__dati{grid-template-columns:1fr 1fr 1fr;gap:.6rem}
+  .piede{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  body{font-size:1.02rem}
+  .astuccio{height:165vh}
+  .hero__sub{font-size:1rem;margin-bottom:1.2rem}
+  .hero__foto img{max-height:28vh}
+  .hero__foto figcaption{display:none}
+  .adesivo{font-size:.9rem;padding:.4rem .7rem}
+  .tessere{grid-template-columns:repeat(2,1fr);gap:.6rem}
+  .tessere .largo{grid-column:1/-1}
+  .banco__dati{grid-template-columns:1fr}
+  .banco__dati li{display:flex;align-items:baseline;gap:.8rem}
+  .banco__dati b{font-size:1.6rem}
+  .banco__dati span{margin:0}
+  .temi{grid-template-columns:1fr}
+  .badge__n{font-size:2.4rem}
+  .zip__nome{font-size:1.5rem}
+  .barra{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:80;background:var(--viola);border-top:3px solid var(--giallo);transform:translateY(110%);transition:transform .3s}
+  .barra.is-visible{transform:none}
+  .barra a{padding:.8rem .2rem .7rem;text-align:center;font-family:var(--f-tit);font-weight:700;font-size:.9rem;text-decoration:none;color:#fff;border-right:1px solid rgba(255,255,255,.15)}
+  .barra a:first-child{background:var(--giallo);color:var(--inchiostro)}
+  .piede{padding-bottom:5.5rem}
+}
+
+/* ── reduced motion ── */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .intro{display:none}
+  .js .reveal{opacity:1;transform:none;transition:none}
+  .js .zip{display:none}
+  .astuccio{height:auto}
+  .astuccio__scena{position:static;height:auto}
+  .astuccio__dentro{min-height:calc(100vh - var(--testata))}
+  .intro__etichetta{animation:none}
+  .bottone,.shot img{transition:none}
+}
